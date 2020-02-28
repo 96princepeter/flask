@@ -1,0 +1,28 @@
+<center>
+	
+{% extends "base.html" %}
+</center>
+
+<div class="container">
+	<div class="card">
+		{% block content %}
+			{% for post in posts %}
+				<div class="card-body">
+					<article class="media content-section">
+				
+				      <div class="media-body">
+
+				        <div class="article-metadata">
+				          <a class="mr-2" href="{{ url_for('account')}}">{{ post.author.username }}</a>
+				          <small class="text-muted">{{ post.date_posted.strftime('%Y-%m-%d') }}</small>
+				        </div>
+
+				        <h2><a class="article-title" href="{{ url_for('post', post_id=post.id) }}">{{ post.title }}</a></h2>
+				        <p class="article-content col-md-3">{{ post.content }}</p>
+				      </div>
+				    </article>		
+				</div>
+		    {% endfor %}
+		{% endblock %}
+	</div>
+</div>
