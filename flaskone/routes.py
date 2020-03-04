@@ -116,19 +116,19 @@ def delete_post(post_id):
 def search():
 	form = SearchForm()
 	if request.method == 'POST':
-		
-
-		# posts = Post.query.filter(title__contains=key)
-		# print(posts,'postssssssssssssssssssss')
-
 		if form.validate_on_submit():
-		 	posts = Post.query.filter((Post.title.like('%'+form.key.data+'%'))| (Post.content.like('%'+form.key.data+'%')))
-		 	user =User.query.filter_by(username=form.key.data).first()
+		 	posts = Post.query.filter((Post.title.like('%'+form.key.data+'%'))|(Post.content.like('%'+form.key.data+'%')))
+		 	users = User.query.filter(User.username.like('%'+form.key.data+'%'))
 			if len(posts.all())>0:
 				return render_template('search.html',title='author',form=form, posts=posts.all())
-			elif user:
-				return render_template('search.html',title='author',form=form, posts=user.posts)
-
+			elif users:
+				all_post=[]
+				for user in users:
+					post=[]
+					for posts in user.posts:
+						post.append(posts)
+					all_post.extend(post)
+				return render_template('search.html',title='author',form=form, posts=all_post)
 	return render_template('search.html',title='get',form=form)
 
 
