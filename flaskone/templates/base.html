@@ -27,6 +27,7 @@
 	 {% if current_user.is_authenticated %}
 	 	<div class="d-inline-block"> <a href="{{ url_for('account')}}"> Account </a> </div>
 	 	<div class="d-inline-block "> <a href="{{ url_for('new_post')}}"> New Post </a> </div>
+	 	<div class="d-inline-block "> <a href="{{ url_for('search')}}"> Search </a> </div>
 		<div class="d-inline-block "> <a href="{{ url_for('logout')}}"> logout </a> </div>
 			
 			

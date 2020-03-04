@@ -1,0 +1,63 @@
+
+<center>
+{% extends "base.html" %}
+</center>
+    
+{% block content %}
+  
+ 
+<div class="container">
+  <br/> </br>
+  <div class="row justify-content-center">
+    <div class="col-12 col-md-10 col-lg-8">
+
+        <form class="card card-sm" method="POST" name="searchform">
+          {{form.hidden_tag() }}
+          <div class="col-auto">
+             <h2> {{form.key.label}} </h2>
+          </div> 
+            <div class="card-body row no-gutters align-items-center">
+                
+                <div class="col-auto">
+                    <i class="fas fa-search h4 text-body"></i>
+                </div>
+                <!--end of col-->
+                <div class="col">
+                                 {{form.key(**{'class':'form-control form-control-lg form-control-borderless'})}}
+
+                </div>
+                <!--end of col-->
+                <div class="col-auto">
+                    <button class="btn btn-lg btn-success" type="submit">Search</button>
+                </div>
+                <!--end of col-->
+            </div>
+        </form>
+    </div>
+    <!--end of col-->
+
+
+
+    
+  </div>
+  {% if title == 'author'%}
+    {% for post in posts %}
+      <div class="card-body">
+        <article class="media content-section">
+          <div class="media-body">
+            <div class="article-metadata">
+              <a class="mr-2" href="{{ url_for('account')}}">{{ post.author.username }}</a>
+              <small class="text-muted">{{ post.date_posted.strftime('%Y-%m-%d') }}</small>
+              <small class="text-muted">{{ post.date_posted.strftime('%H:%M:%S') }}</small>
+            </div>
+            <h2><a class="article-title" href="{{ url_for('post', post_id=post.id) }}">{{ post.title }}</a></h2>
+            <p class="article-content col-md-3">{{ post.content }}</p>
+          </div>
+        </article>    
+      </div>   
+    {% endfor %}
+  {% endif %}
+      
+   <!-- 
+</div> -->
+{% endblock %}

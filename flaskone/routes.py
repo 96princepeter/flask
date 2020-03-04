@@ -1,10 +1,9 @@
 from flask import render_template,redirect,url_for,request
 from flaskone import app, db, bcrypt
-from flaskone.forms import RegistrationForm,LoginForm,PostForm
+from flaskone.forms import RegistrationForm,LoginForm,PostForm,SearchForm
 from flaskone.models import User,Post
 from flask_login import login_user, current_user, logout_user, login_required
 from sqlalchemy import desc
-
 
 @app.route("/")
 @app.route("/home")
@@ -55,7 +54,7 @@ def logout():
 @app.route("/account")
 @login_required
 def account():
-    posts = Post.query.filter_by(user_id=current_user.id).order_by(desc(Post.date_posted)).all()
+    posts = Post.query.filter_by(user_id=current_user.id).order_by(desc(Post.date_posted))
     return render_template('account.html', title='Account',posts=posts)
 
 
@@ -68,7 +67,6 @@ def new_post():
     form = PostForm()
     if form.validate_on_submit():
         post = Post(title=form.title.data, content=form.content.data, author=current_user)
-        print('some data ', post)
         db.session.add(post)
         db.session.commit()
         return redirect(url_for('home'))
@@ -76,6 +74,7 @@ def new_post():
                            form=form, legend='New Post')
 
 @app.route("/post/<int:post_id>")
+@login_required
 def post(post_id):
     post = Post.query.get_or_404(post_id)
     return render_template('post.html', title=post.title, post=post)
@@ -111,3 +110,28 @@ def delete_post(post_id):
     db.session.delete(post)
     db.session.commit()
     return redirect(url_for('home'))
+
+@app.route("/search", methods=['GET','POST'])
+@login_required
+def search():
+	form = SearchForm()
+	if request.method == 'POST':
+		
+
+		# posts = Post.query.filter(title__contains=key)
+		# print(posts,'postssssssssssssssssssss')
+
+		if form.validate_on_submit():
+		 	posts = Post.query.filter((Post.title.like('%'+form.key.data+'%'))| (Post.content.like('%'+form.key.data+'%')))
+		 	user =User.query.filter_by(username=form.key.data).first()
+			if len(posts.all())>0:
+				return render_template('search.html',title='author',form=form, posts=posts.all())
+			elif user:
+				return render_template('search.html',title='author',form=form, posts=user.posts)
+
+	return render_template('search.html',title='get',form=form)
+
+
+    
+
+

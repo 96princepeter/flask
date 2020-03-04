@@ -1,8 +1,8 @@
-from flask_wtf import FlaskForm
+from flask_wtf import FlaskForm, Form
 from wtforms import StringField,PasswordField,SubmitField,BooleanField
 from wtforms.validators import DataRequired,Length,Email,EqualTo, ValidationError
 from flaskone.models import User
-
+import wtforms
 
 class RegistrationForm(FlaskForm):
     username = StringField('Username',validators=[DataRequired(),Length(min=2, max=20)])
@@ -34,4 +34,6 @@ class PostForm(FlaskForm):
     content = StringField('Content',validators=[DataRequired(),Length(min=2, max=130)])
     submit = SubmitField('Post')
 
+class SearchForm(Form):
+    key = StringField('Search',validators=[DataRequired(),Length(min=2, max=20)])
 

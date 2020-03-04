@@ -1,6 +1,9 @@
 from datetime import datetime
 from flaskone import db, login_manager
 from flask_login import UserMixin
+from flaskone import app
+
+
 
 
 @login_manager.user_loader
@@ -20,11 +23,14 @@ class User(db.Model, UserMixin):
 
 
 class Post(db.Model):
+    # __searchable__ = ['title', 'content']  # these fields will be indexed by whoosh
+     
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(100), nullable=False)
-    date_posted = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+    date_posted = db.Column(db.DateTime, nullable=False, default=datetime.now())
     content = db.Column(db.Text, nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    user = db.relationship("User", backref="Posts")
 
     # def __repr__(self):
     #     return f"Post('{self.title}', '{self.date_posted}')"
