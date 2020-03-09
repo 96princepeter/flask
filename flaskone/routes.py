@@ -35,6 +35,7 @@ def login():
         user = User.query.filter_by(email=form.email.data).first()
         if user and bcrypt.check_password_hash(user.password, form.password.data):
             login_user(user, remember=form.remember.data)
+
             next_page = request.args.get('next')
             return redirect(next_page) if next_page else redirect(url_for('home'))
     return render_template('login.html', title='Login', form=form)
@@ -51,11 +52,20 @@ def logout():
 
 # Account show the User Posts only
 
-@app.route("/account")
+@app.route("/account", methods=['GET', 'POST'])
 @login_required
 def account():
     posts = Post.query.filter_by(user_id=current_user.id).order_by(desc(Post.date_posted))
-    return render_template('account.html', title='Account',posts=posts)
+    user = User.query.filter_by(id=current_user.id).first()
+    form = SearchForm()
+    print('post valid',request.method)
+    if request.method == 'POST':
+    	if form.validate_on_submit():
+    		users = User.query.filter(User.username.like('%'+form.key.data+'%'))
+    		if users:
+    			return render_template('account.html', title='search',posts=posts,user =user,form=form,users=users)
+    else:
+    	return render_template('account.html', title='Account',posts=posts,user =user,form=form)
 
 
 # Post Related process Create new post Update post and Delete post allso 
@@ -134,4 +144,40 @@ def search():
 
     
 
+@app.route("/user/<int:user_id>")
+@login_required
+def user(user_id):
+	user = User.query.get(user_id)
+	friend=''
+	for frd in current_user.friends:
+		if frd==user:
+			friend=frd		
+	return render_template('user.html',user=user,posts=user.posts,friend=friend)
+
+
+@app.route("/add/<int:user_id>")
+@login_required
+def addfriend(user_id):
+	user = User.query.get(user_id)
+	user.friendz.append(current_user)
+	db.session.commit()
+	friend=''
+	for frd in current_user.friends:
+		if frd==user:
+			friend=frd		
+	return render_template('user.html',user=user,posts=user.posts,friend=friend)
+
+
+@app.route("/account/friends", methods=['GET','POST'])
+@login_required
+def friends():
+    user = User.query.filter_by(id=current_user.id).first()
+    form = SearchForm()
+    if request.method == 'POST':
+    	if form.validate_on_submit():
+    		users = User.query.filter(User.username.like('%'+form.key.data+'%'))
+    		if users:
+    			return render_template('friends.html', title='search',user=user,form=form,users=users)
+    else:
+    	return render_template('friends.html', title='friends',user =user,form=form)
 

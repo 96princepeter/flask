@@ -1,0 +1,60 @@
+
+<center>
+{% extends "base.html" %}
+{% block content %}
+  <div class="row">
+    <div class="col-4">
+      <!-- user profile -->
+      <div class="card">
+        <h2> Profile </h2>
+        {{user.username}} <br>
+        {{user.email}} <br>
+        <a href=""> Friends </a>
+      </div>
+    </div>
+
+    <div class="col-6">
+      <div class="row">
+       
+          {% if friend %}
+
+            <div class="col-6 card ">
+              <h3> Friend </h3> 
+            </div>
+          {% else %}
+            <div class="col-6 card ">
+              <a href="{{ url_for('addfriend',user_id=user.id)}}"> <h3> Add Friend </h3> </a> 
+            </div>
+          {% endif %}
+       
+
+        
+
+        <div class="col-6 card">
+          <a href=""> <h3> Message </h3> </a> 
+        </div>
+              
+      </div>
+      {% for post in posts %}
+        <div class="card-body">
+          <article class="media content-section">
+        
+              <div class="media-body">
+
+                <div class="article-metadata">
+                  <a class="mr-2" href="{{ url_for('account')}}">{{ post.author.username }}</a>
+                  <small class="text-muted">{{ post.date_posted.strftime('%Y-%m-%d') }}</small>
+                  <small class="text-muted">{{ post.date_posted.strftime('%H:%M:%S') }}</small>
+                </div>
+
+                <h2><a class="article-title" href="{{ url_for('post', post_id=post.id) }}">{{ post.title }}</a></h2>
+                <p class="article-content col-md-3">{{ post.content }}</p>
+              </div>
+            </article>    
+        </div>
+        {% endfor %}
+    </div>
+
+  </div>
+{% endblock content %}
+</center>
